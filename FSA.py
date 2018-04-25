@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import subprocess
 import random
 
 class Board():
@@ -201,8 +200,10 @@ for i in B:
         P.setdefault(j, []).append(i)
 '''
 P = []
+
 #V, X = infer(P, B, Oracle)
 
 board = Board('output.txt')
 board.load_random_board()
+
 print("finished")
