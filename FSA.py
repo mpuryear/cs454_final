@@ -1,12 +1,27 @@
+import os
 import numpy as np
-
 from enum import Enum
+
 class Action(Enum):
     x_rotate = 'x'
     y_rotate = 'y'
     z_rotate = 'z'
     
-
+class Board():
+    def __init__(self, filename):
+        self.filename = filename
+    def apply_basic_moves(moves):
+        # Do Something Public
+        pass
+    def __apply_basic_moves(moves):
+        # Do Something Private
+        pass
+    def __load_random_board():
+        # Do Something
+        pass
+    def compare(board):
+        # Do Something
+        pass
 
 # Formally, an FSA M is a 6-tuple
 # ξ = <Q, B, P, q0, ẟ, γ)
@@ -71,7 +86,7 @@ def infer(P, B, Oracle):
     
     print(X)
 
-    for t in V:
+    for t in list(V):
         print(V[t])
         for b in range(len(B)):
             while X[V[t]][b] == -1:
