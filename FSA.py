@@ -71,64 +71,64 @@ def infer(P, B, Oracle):
     
     print(X)
 
-    for t in list(V):
-        print(V[t])
-        for b in range(len(B)):
-            while X[V[t]][b] == -1:
-                n = 1
-                b_n = ['', B[b]]
-                b_i = ['']
-                for s in list(V):
-                    print('s in V: ' + str(s))
-                    # if not s === (b^n)t
-                    while True:#not Oracle(s, (b_n[n], t)):
-                        if n == 2:
-                            break
-                        n = n + 1
-                        b_n.append(b_n[n-1] + B[b])
-                        print(n)
+    was_unioned = True
+    while True:
+        if not was_unioned:
+            break
+        was_unioned = False
+        for t in list(V):
+            print(V[t])
+            for b in range(len(B)):
+                while X[V[t]][b] == -1:
+                    n = 1
+                    b_n = ['', B[b]]
+                    b_i = ['']
+                    for s in list(V):
+                        print('s in V: ' + str(s))
+                        # if not s === (b^n)t
+                        while not Oracle(s, b_n[n-1] + t):
+                            n = n + 1
+                            b_n.append(b_n[n-1] + B[b])
 
 
-                    for i in range(1, n):
-                        # vertex doesnt exist in update graph, so add it
-                        b_i.append(b_i[i-1] + B[b])
-                    
-                        V[b_i[i] + t] = len(V) # V = V union {[b^i t]}
-                        # add the edge to the newly added vertex
+                        for i in range(1, n):
+                            # vertex doesnt exist in update graph, so add it
+                            b_i.append(b_i[i-1] + B[b])
+                            
+                            V[b_i[i] + t] = len(V) # V = V union {[b^i t]}
+                            was_unioned = True 
+                            # add the edge to the newly added vertex
+                            '''
+                            print('X: '+ str(X))
+                            print('V: ' + str(V))
+                            print('b_i:' + str(b_i[i]))
+                            print('b_i-1: ' + str(b_i[i-1]))
+                            print('i: ' + str(i))
+                            print('b: ' + str(b))
+                            print('t: ' + str(t))
+                            print('V[b_i[i-1] + t]: ' + str(V[b_i[i-1]+t]))
+                            '''
+                            if len(X) <= V[b_i[i-1] + t]:
+                                X.append([-1, -1, -1])
+                            X[V[b_i[i-1] + t]][b] = V[b_i[i] + t]
+
                         '''
-                        print('X: '+ str(X))
-                        print('V: ' + str(V))
-                        print('b_i:' + str(b_i[i]))
-                        print('b_i-1: ' + str(b_i[i-1]))
-                        print('i: ' + str(i))
-                        print('b: ' + str(b))
+                        # our s === (b^n)t
                         print('t: ' + str(t))
-                        print('V[b_i[i-1] + t]: ' + str(V[b_i[i-1]+t]))
+                        print('n: ' + str(n))
+                        print('b_n-1: ' + str(b_n[n-1]))
+                        print('V[s] @ b_n: '+ str(V[s]))
+                        print('V[b_n[n-1] + t]: ' + str(V[b_n[n-1] + t]))
                         '''
-                        if len(X) <= V[b_i[i-1] + t]:
+                        if len(X) <= V[b_n[n-1] + t]:
                             X.append([-1, -1, -1])
-                        X[V[b_i[i-1] + t]][b] = V[b_i[i] + t]
-
-                    '''
-                    # our s === (b^n)t
-                    print('t: ' + str(t))
-                    print('n: ' + str(n))
-                    print('b_n-1: ' + str(b_n[n-1]))
-                    print('V[s] @ b_n: '+ str(V[s]))
-                    print('V[b_n[n-1] + t]: ' + str(V[b_n[n-1] + t]))
-                    '''
-                    if len(X) <= V[b_n[n-1] + t]:
-                        X.append([-1, -1, -1])
-                    X[V[b_n[n-1]+t]][b] = V[s]
+                        X[V[b_n[n-1]+t]][b] = V[s]
     print(X)
     return V, X
             
 
-def Oracle(a, bt):
-    return True
-
-    a = str(bt[0][0]) + str(bt[0][0]) + str(bt[0][0])
-    return a == bt[0] + bt[1]
+def Oracle(s, t):
+    return False 
 
 
 
