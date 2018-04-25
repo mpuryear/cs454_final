@@ -71,7 +71,7 @@ def infer(P, B, Oracle):
     
     print(X)
 
-    for t in V:
+    for t in list(V):
         print(V[t])
         for b in range(len(B)):
             while X[V[t]][b] == -1:
