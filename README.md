@@ -11,3 +11,8 @@ We can apply this algorithm to help a robot solve a Rubik’s Cube. We limit its
 ![Figure 7](https://imgur.com/041ehZS)
 
 # Disclaimer:
+
+
+## References:
+[Diversity-based inference of finite automata](https://www.cs.princeton.edu/~schapire/papers/diversity-based-inference.pdf)
+[Inference of Finite Automata Using Homing Sequences](https://pdfs.semanticscholar.org/9a62/d26420afc77543c8f17bae1b482bcb28dc66.pdf)
