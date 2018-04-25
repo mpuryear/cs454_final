@@ -1,19 +1,45 @@
 import os
 import numpy as np
-from enum import Enum
-    
+import subprocess
+import random
+
 class Board():
+    
     def __init__(self, filename):
         self.filename = filename
+        self.board = []
     def apply_basic_moves(moves):
         # Do Something Public
-        pass
-    def __apply_basic_moves(moves):
+        for move in moves:
+            __apply_basic_move(move)
+    def __apply_basic_move(move):
         # Do Something Private
+        if move == 'x':
+            self.__x_move()
+        elif move == 'y':
+            self.__y_move()
+        elif move == 'z':
+            self.__z_move()
+        else:
+            print('illegal move: ' + move)
         pass
-    def __load_random_board():
-        # Do Something
+    def __x_move():
+        # rotate on the x axis
         pass
+    def __y_move():
+        # rotate on the y axis
+        pass
+    def __z_move():
+        # rotate on the z axis
+        pass
+    def load_random_board(self):
+        board = self.__load_random_board()
+    def __load_random_board(self):
+        board = []
+        num_moves = random.randint(6,100)
+        r = ''.join(random.choice(['x', 'y', 'z']) for x in range(num_moves))
+        print(r)
+        return board
     def compare(board):
         # Do Something
         pass
@@ -175,5 +201,8 @@ for i in B:
         P.setdefault(j, []).append(i)
 '''
 P = []
-V, X = infer(P, B, Oracle)
+#V, X = infer(P, B, Oracle)
+
+board = Board('output.txt')
+board.load_random_board()
 print("finished")
