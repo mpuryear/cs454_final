@@ -42,42 +42,106 @@ def infer(P, B, Oracle):
     
     Outputs:
     V - set of equivalance classes
-    X - VxB -> V such that x([t], b) == [bt]
+    X - VxB -> V such that X([t], b) == [bt]
     '''
-    V = P
 
-    X = [[None]]
+    '''
+    initially V consists of one equivalence class for each of the
+    predicates.
+    '''
 
+    # let V be a lookup table of the form:
+    # V{'x'} = 0
+    # V{'y'} = 1
+    # V{'z'} = 2
+    # V{'xt'} = V{'x'} = 0 for some equiv class x == xt
+    V = {}
+    i = 0
+    for b in B:
+        V[b] = i
+        i += 1
+
+    max_v = len(V) -1
+        
+    print(V)
+    # start with an undefined update graph with each Predicate Vertex
+    X = []
+    for a in range(len(B)):
+        row = np.ones((len(B)), dtype='int')
+        row *= -1
+#        row[a] = 0
+        X.append(list(row))
+    
     print(np.array(X).shape)
     print(X)
-    t = 0
-    b = 0
-    while X[t][b] is None:
-        n = 0
-        for s in V:
-            if not Oracle(s, (B[n], V[t])):
-                n = n + 1
-                if n >= len(B):
-                    break
-        for i in range(0, n):
-            print(B[i])
-            print(V[t])
-            V.append([B[i] + V[t]])
-            X[B[i-1]t][b] = b[i]t
-        #X[b[n-1]t][b] = s
+
+    for t in list(V):
+#        print('t: ' + str(t))
+        for b in range(len(B)):
+#            print('X[V[t]][b] -> [' + str(V[t]) + '][' + str(b) + ']')
+#            print('X[V[t]][b] -> ' + str(X[V[t]][b]))
+            while X[V[t]][b] == -1:
+                n = 0
+                b_n = [B[b]]
+                for s in list(V):
+                    print('s in V: ' + str(s))
+                    # if not s === (b^n)t
+
+                    while not Oracle(s, (b_n[n], t)):
+                        if(n == 3):
+                            break
+                        n = n + 1
+                        b_n.append(b_n[n-1] + B[b])
+                        print(n)
+
+                for i in range(1, n+1):
+                    # vertex doesnt exist in update graph, so add it
+                    b_i = ['']
+                    for j in range(1, i+1):
+                        b_i.append(b_i[j-1] + B[b])
+                    V[b_i[i] + t] = len(V) # V = V union {[b^i t]}
+                    # add the edge to the newly added vertex
+                    print('X: '+ str(X))
+                    print('V: ' + str(V))
+                    print('b_i:' + str(b_i[i]))
+                    print('b_i-1: ' + str(b_i[i-1]))
+                    print('i: ' + str(i))
+                    print('b: ' + str(b))
+                    print('t: ' + str(t))
+                    print('V[b_i[i-1] + t]: ' + str(V[b_i[i-1]+t]))
+                    if len(X) <= V[b_i[i-1] + t]:
+                        X.append([-1, -1, -1])
+                    X[V[b_i[i-1] + t]][b] = V[b_i[i] + t]
+
+                # our s === (b^n)t
+                print('t: ' + str(t))
+                print('n: ' + str(n))
+                print('b_n-1: ' + str(b_n[n-1]))
+                print('V[s] @ b_n: '+ str(V[s]))
+                print('V[b_n[n-1] + t]: ' + str(V[b_n[n-1] + t]))
+                if len(X) <= V[b_n[n-1] + t]:
+                        X.append([-1, -1, -1])
+                X[V[b_n[n-1]+t]][b] = V[s]
     return V, X
             
 
 def Oracle(a, bt):
-    b = bt[0]
-    t = bt[1]
-    return False
+#    print('a: ' + str(a))
+#    print('bt: ' + str(bt))
+    a = str(bt[0][0]) + str(bt[0][0]) + str(bt[0][0])
+    return a == bt[0] + bt[1]
 
 
 
 
 B = ['x', 'y', 'z']
 
-P = ['x']
+'''
+P = dict()
+for i in B:
+    for j in range(int(i), int(i) + 2):
+        P.setdefault(j, []).append(i)
+'''
+P = []
 V, X = infer(P, B, Oracle)
 print("finished")
