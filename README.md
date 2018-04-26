@@ -50,3 +50,7 @@ end
 ## References:
 [Diversity-based inference of finite automata](https://www.cs.princeton.edu/~schapire/papers/diversity-based-inference.pdf)
 [Inference of Finite Automata Using Homing Sequences](https://pdfs.semanticscholar.org/9a62/d26420afc77543c8f17bae1b482bcb28dc66.pdf)
+
+![Rubiks cube](https://ruwix.com/pics/mathematics-of-the-rubiks-cube-permutation-group.jpg)
+
+![Rubiks cube](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Rubik%E2%80%99s_cube_colors.svg/453px-Rubik%E2%80%99s_cube_colors.svg.png)
