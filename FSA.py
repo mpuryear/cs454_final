@@ -11,7 +11,7 @@ class Board():
     bottom = 2
     right = 3
     top = 4
-    front = 5
+    front= 5
 
     def __init__(self):
         self.board = []
@@ -193,10 +193,11 @@ def infer(P, B, Oracle):
                         found_equiv = False
                         for s_ in V:
                             s = s_
+                            
                             #print('s in V: ' + str(s) + ' t: ' + str(t))
                             # if not s === (b^n)t
-                            num_experiments += 1
-                            num_moves += len(b_n[n] + t) - 3
+#                            num_experiments += 1
+#                            num_moves += len(b_n[n] + t) - 3
                             if not Oracle(s, b_n[n] + t):
                                 found_equiv = False
                             else:
@@ -251,8 +252,8 @@ def infer(P, B, Oracle):
                     #      str(b) + ']: ' + str(V[s]))
 
                 #break
-#    print('V: ' + str(V))
-#    print('X: ' + str(X))
+    print('V: ' + str(V))
+    print('X: ' + str(X))
     print('X.shape : ' + str(np.array(X).shape))
     print('num experiments: ' + str(num_experiments))
     print('num_outerloop: ' + str(num_outerloop))
@@ -275,24 +276,32 @@ then halt and conclude s != t.
 (4) Repeat steps (2) and (3) until confident that s === t.
     '''
 
-    # find path A in X
-
-    #print('compaing (s,t): ' + str(s) + ', ' + str(t))
-    # (2) 
-    q = Board()
-    q.load_random_board()
-    q2 = copy.deepcopy(q)
+    # rule 4
+    Dmax = 4
+    val = True
+    for i in range(Dmax):
+        
+        # find path A in X
+        
+        print('compaing (s,t): ' + str(s) + ', ' + str(t))
+        # (2) 
+        q = Board()
+        q.load_random_board()
+        q2 = copy.deepcopy(q)
 
     
-    q.apply_basic_moves(s)
+        q.apply_basic_moves(s)
 
-    # len(t) - 3 = num_moves applied
-    q2.apply_basic_moves(t)
+        # len(t) - 3 = num_moves applied
+        q2.apply_basic_moves(t)
 
 
-    a = q.get_predicate()
-    b = q2.get_predicate()
-    # sense occurs
+        a = q.get_predicate()
+        b = q2.get_predicate()
+        # sense occurs
+        val |= a == b
+        
+    print('Found: ' + str(a == b))
     return a == b
 
 
@@ -305,12 +314,6 @@ start = time.time()
 start_board = Board()
 start_board.load_random_board()
 
-test_board = copy.deepcopy(start_board)
-
-#test_board.apply_basic_moves('xyzabc')
-start_board.apply_basic_moves('xyabc')
-
-#print(start_board == test_board)
 
 P = start_board.get_predicate()
 num_moves = 0
