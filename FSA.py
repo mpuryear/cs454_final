@@ -2,7 +2,7 @@ import os
 import numpy as np
 import random
 import copy
-
+import time
 
 class Board():
 
@@ -14,8 +14,9 @@ class Board():
     front = 5
 
     def __init__(self):
-        self.board = []        
-        colors = ['w', 'g', 'r', 'b', 'o', 'y']
+        self.board = []
+        # white green red blue orange pink
+        colors = ['w', 'g', 'r', 'b', 'o', 'p']
         for color in colors:
             face = [[], [], []]
             for i in range(3):
@@ -36,8 +37,8 @@ class Board():
             self.__y_move()
         elif move == 'z':
             self.__z_move()
-        else:
-            print('illegal move: ' + move)
+
+            #print('illegal move: ' + move)
 
     def __x_move(self):
         # rotate on the x axis
@@ -108,6 +109,9 @@ class Board():
         return self.__dict__ == other.__dict__
 
 
+
+
+    
 # Formally, an FSA M is a 6-tuple
 # ξ = <Q, B, P, q0, ẟ, γ)
 '''
@@ -162,32 +166,47 @@ def infer(P, B, Oracle):
     print(V)
     # start with an undefined update graph with each Predicate Vertex
     X = []
-    for a in range(len(V)):
-        row = np.ones((len(B)), dtype='int')
-        row *= -1
-        X.append(list(row))
-    
-    print(X)
-    was_unioned = True
-    #    while True:
-    #        if not was_unioned:
-    #            break
-    #        was_unioned = False
-    for t in list(V):
-        print(V[t])
-        for b in range(len(B)):
-            while X[V[t]][b] == -1:
-                n = 1
-                b_n = ['', B[b]]
-                b_i = ['']
-                for s in list(V):
-                    print('s in V: ' + str(s) + ' t: ' + str(t))
-                    # if not s === (b^n)t
-                    while not Oracle(s, b_n[n-1] + t):
-                        n = n + 1
-                        b_n.append(b_n[n-1] + B[b])
-                        
 
+
+    row_to_append = [-1 for f in range(len(B))]
+    for a in range(len(V)):
+        X.append(list(row_to_append))
+
+    print(X)
+    num_experiments = 0
+    num_outerloop = 0
+    num_moves = 0
+    was_unioned = True
+    while True:
+        num_outerloop += 1
+        if not was_unioned:
+            break
+        was_unioned = False
+        for t in list(V):
+            for b in range(len(B)):
+                while X[V[t]][b] == -1:
+                    n = 1
+                    b_n = ['', B[b]]
+                    b_i = ['']
+                    s = ['']
+                    while True:
+                        found_equiv = False
+                        for s_ in V:
+                            s = s_
+                            #print('s in V: ' + str(s) + ' t: ' + str(t))
+                            # if not s === (b^n)t
+                            num_experiments += 1
+                            num_moves += len(b_n[n] + t) - 3
+                            if not Oracle(s, b_n[n] + t):
+                                found_equiv = False
+                            else:
+                                found_equiv = True
+                                break
+                        if found_equiv:
+                            break
+                        else:
+                            b_n.append(b_n[n] + B[b])
+                            n = n+1
                         
                     for i in range(1, n):
                         # vertex doesnt exist in update graph, so add it
@@ -206,9 +225,14 @@ def infer(P, B, Oracle):
                         print('t: ' + str(t))
                         print('V[b_i[i-1] + t]: ' + str(V[b_i[i-1]+t]))
                         '''
+
                         if len(X) <= V[b_i[i-1] + t]:
-                            X.append([-1, -1, -1])
+                            X.append(list(row_to_append))
+                        #print('Before: ' + str(X))
                         X[V[b_i[i-1] + t]][b] = V[b_i[i] + t]
+                        #print('Adding to X[' + str(V[b_i[i-1] + t]) + ']['
+                        #      + str(b) + ']: '+ str(V[b_i[i] + t]))
+                       # print('After: ' + str(X))
                     '''
                     # our s === (b^n)t
                     print('t: ' + str(t))
@@ -217,10 +241,22 @@ def infer(P, B, Oracle):
                     print('V[s] @ b_n: '+ str(V[s]))
                     print('V[b_n[n-1] + t]: ' + str(V[b_n[n-1] + t]))
                     '''
+
+
+                    
                     if len(X) <= V[b_n[n-1] + t]:
-                        X.append([-1, -1, -1])
+                        X.append(list(row_to_append))
                     X[V[b_n[n-1]+t]][b] = V[s]
-    print(X)
+                    #print('Adding to X[' +str(V[b_n[n-1]+t]) + '][' +
+                    #      str(b) + ']: ' + str(V[s]))
+
+                #break
+#    print('V: ' + str(V))
+#    print('X: ' + str(X))
+    print('X.shape : ' + str(np.array(X).shape))
+    print('num experiments: ' + str(num_experiments))
+    print('num_outerloop: ' + str(num_outerloop))
+    print('num_moves: ' + str(num_moves))
     return V, X
             
 
@@ -241,30 +277,48 @@ then halt and conclude s != t.
 
     # find path A in X
 
-    print('compaing (s,t): ' + str(s) + ', ' + str(t))
+    #print('compaing (s,t): ' + str(s) + ', ' + str(t))
     # (2) 
     q = Board()
     q.load_random_board()
     q2 = copy.deepcopy(q)
 
-    q.apply_basic_moves(s)
-    q2.apply_basic_moves(t)
     
-    return q == q2
+    q.apply_basic_moves(s)
+
+    # len(t) - 3 = num_moves applied
+    q2.apply_basic_moves(t)
+
+
+    a = q.get_predicate()
+    b = q2.get_predicate()
+    # sense occurs
+    return a == b
 
 
 
 
 B = ['x', 'y', 'z']
 
-
+start = time.time()
 # our predicates are each visible color.
 start_board = Board()
 start_board.load_random_board()
 
+test_board = copy.deepcopy(start_board)
+
+#test_board.apply_basic_moves('xyzabc')
+start_board.apply_basic_moves('xyabc')
+
+#print(start_board == test_board)
+
 P = start_board.get_predicate()
-                           
+num_moves = 0
 V, X = infer(P, B, Oracle)
+print('num_moves' + str(num_moves))
+print('time: ' + str(time.time() - start))
+
+
 '''
 board = Board()
 board.load_random_board()
