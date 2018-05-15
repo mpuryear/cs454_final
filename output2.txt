@@ -1,0 +1,7 @@
+{'BBW': 0}
+[[-1, -1, -1]]
+X.shape : (3456, 3)
+num experiments: 10368
+num senses: 17923421
+num_moves: 44114
+time: 17137.93716454506

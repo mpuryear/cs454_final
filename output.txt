@@ -1,0 +1,7 @@
+{'BBR': 0}
+[[-1, -1, -1]]
+X.shape : (2833, 3)
+num experiments: 8499
+num senses: 9610035
+num_moves: 37816
+time: 9128.696152687073
